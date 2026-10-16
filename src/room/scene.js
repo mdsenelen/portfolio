@@ -247,18 +247,18 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
   const boxLid = M(0xd9a21b, { roughness: 0.42, name: 'projects_box_lid' })
   mesh(box(0.36, 0.17, 0.28), boxBody, 'projects_box_body', projectsBox, 0, 0.085, 0)
   mesh(box(0.38, 0.035, 0.30), boxLid, 'projects_box_lid', projectsBox, 0, 0.1875, 0)
-  // bold sans with a dark outline: thin script on purple disappears at phone size
-  const projectsLabel = canvasTex(1024, 372, (ctx, width, height) => {
-    ctx.font = '800 190px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif'
+  // the site's Caveat, bolder and with a thin dark outline so it holds up on purple at phone size
+  const projectsLabel = canvasTex(1024, 340, (ctx, width, height) => {
+    ctx.clearRect(0, 0, width, height)
+    ctx.font = '700 150px Caveat,"Bradley Hand",cursive'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    if ('letterSpacing' in ctx) ctx.letterSpacing = '8px'
-    ctx.lineJoin = 'round'; ctx.lineWidth = 22; ctx.strokeStyle = '#2b1240'
-    ctx.strokeText('PROJECTS', width / 2, height / 2, width - 60)
-    ctx.fillStyle = '#fff4cf'
-    ctx.fillText('PROJECTS', width / 2, height / 2, width - 60)
+    ctx.lineJoin = 'round'; ctx.lineWidth = 10; ctx.strokeStyle = 'rgba(43,18,64,.85)'
+    ctx.strokeText('PROJECTS', width / 2, height / 2)
+    ctx.fillStyle = '#fff9ea'
+    ctx.fillText('PROJECTS', width / 2, height / 2)
   })
-  mesh(new THREE.PlaneGeometry(0.33, 0.12), new THREE.MeshBasicMaterial({ map: projectsLabel, transparent: true, depthWrite: false, toneMapped: false }), 'projects_box_label', projectsBox, 0, 0.088, 0.141)
+  mesh(new THREE.PlaneGeometry(0.3, 0.1), new THREE.MeshBasicMaterial({ map: projectsLabel, transparent: true, depthWrite: false }), 'projects_box_label', projectsBox, 0, 0.09, 0.141)
   projectsBox.userData.focus = 'box'
   mesh(box(0.045, 0.025, 0.012), gold, 'projects_box_latch', projectsBox, 0, 0.17, 0.156)
   const notebookStack = stack('notebooks', -0.85, -0.16, [
@@ -690,11 +690,12 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
       goal.eye.set(spot.at.x, spot.at.y + spot.rise, spot.at.z + d)
       return
     }
-    // portrait phones: frame board → projects box instead of the whole room, so things stay readable
+    // portrait phones: frame the board (left edge ≈ -1.57) through the light switch (≈ 1.36);
+    // small things are read by tapping to zoom in
     const portrait = camera.aspect < 1
-    const x = portrait ? -0.5 : 0.0
+    const x = portrait ? -0.1 : 0.0
     goal.look.set(x, portrait ? 1.0 : 0.8, 0.1)
-    goal.eye.set(x, 1.35, Math.max(1.9, fitDist(portrait ? 1.12 : 1.45, 0.55)))
+    goal.eye.set(x, 1.35, Math.max(1.9, fitDist(portrait ? 1.46 : 1.45, 0.55)))
   }
   function setFocus(key) {
     if (focused === key) return
@@ -861,6 +862,7 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
       if (disposed) return
       drawPage(pgL, 0); drawPage(pgR, 1)
       stickies.forEach(n => { const t = n.material[4]; if (t && t.map) redraw(t.map) })
+      redraw(projectsLabel)
     })
   }
   tick()

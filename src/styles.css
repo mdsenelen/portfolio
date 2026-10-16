@@ -460,13 +460,13 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 168px;
+  width: 196px;
   padding: 6px 8px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 12px;
   background: transparent;
   font: inherit;
-  font-size: 13px;
+  font-size: 15px;
   color: #2a1e33;
   cursor: pointer;
   text-align: left;
@@ -480,10 +480,10 @@ body {
 .desktop__glyph {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  font-size: 22px;
+  width: 52px;
+  height: 52px;
+  border-radius: 13px;
+  font-size: 28px;
   box-shadow: 0 2px 6px rgba(42, 30, 51, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
@@ -711,19 +711,46 @@ body {
     display: none;
   }
 
+  .desktop__clock {
+    display: none;
+  }
+
+  .desktop__brand,
+  .desktop__back {
+    white-space: nowrap;
+  }
+
+  /* phone home-screen grid: big icons, labels underneath */
   .desktop__icons {
-    flex-direction: row;
-    flex-wrap: wrap;
-    right: 10px;
-    left: 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px 8px;
+    top: 58px;
+    right: 12px;
+    left: 12px;
   }
 
   .desktop__icon {
-    width: auto;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 4px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .desktop__glyph {
+    width: 68px;
+    height: 68px;
+    border-radius: 18px;
+    font-size: 36px;
   }
 
   .desktop__label {
-    display: none;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .window {
