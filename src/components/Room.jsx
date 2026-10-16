@@ -43,6 +43,7 @@ export default function Room() {
   const [musicOpen, setMusicOpen] = useState(false)
   const [musicState, setMusicState] = useState('stopped')
   const [touched, setTouched] = useState(false)
+  const [zoomed, setZoomed] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -136,6 +137,16 @@ export default function Room() {
   }, [projectsOpen])
 
   useEffect(() => {
+    // let open dialogs take Escape first
+    if (!zoomed || projectsOpen || desktopOpen) return
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') roomRef.current?.unfocus()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [zoomed, projectsOpen, desktopOpen])
+
+  useEffect(() => {
     const room = createRoom({
       container: stageRef.current,
       profile: { name: profile.name, role: profile.role, skills },
@@ -166,6 +177,10 @@ export default function Room() {
         setDesktopOpen(true)
         setTouched(true)
       },
+      onFocusChange: (isZoomed) => {
+        setZoomed(isZoomed)
+        setTouched(true)
+      },
     })
     roomRef.current = room
     return () => {
@@ -186,6 +201,11 @@ export default function Room() {
         <p className="room__hint">
           laptop: desktop · project box: projects · notebooks: Medium · guitar: music
         </p>
+      )}
+      {zoomed && (
+        <button type="button" className="room__back" onClick={() => roomRef.current?.unfocus()}>
+          ← back to room
+        </button>
       )}
       {projectsOpen && (
         <div className="room__projects-overlay" onClick={() => setProjectsOpen(false)}>

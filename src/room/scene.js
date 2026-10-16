@@ -7,7 +7,7 @@ import * as THREE from 'three'
 const TW = { sky: '#4aa8f0', wall: 'violet', drift: true, parallax: 1 }
 const NIGHT_KEY = 'room-night'
 
-export function createRoom({ container, links = {}, profile = {}, onOpenDesktop, onOpenProjects, onTrackPlay }) {
+export function createRoom({ container, links = {}, profile = {}, onOpenDesktop, onOpenProjects, onTrackPlay, onFocusChange }) {
   const canvas = document.createElement('canvas')
   canvas.className = 'room__canvas'
   container.appendChild(canvas)
@@ -247,14 +247,19 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
   const boxLid = M(0xd9a21b, { roughness: 0.42, name: 'projects_box_lid' })
   mesh(box(0.36, 0.17, 0.28), boxBody, 'projects_box_body', projectsBox, 0, 0.085, 0)
   mesh(box(0.38, 0.035, 0.30), boxLid, 'projects_box_lid', projectsBox, 0, 0.1875, 0)
-  const projectsLabel = canvasTex(512, 128, (ctx, width, height) => {
-    ctx.fillStyle = '#fff9ea'
-    ctx.font = '500 54px Caveat,"Bradley Hand",cursive'
+  // bold sans with a dark outline: thin script on purple disappears at phone size
+  const projectsLabel = canvasTex(1024, 372, (ctx, width, height) => {
+    ctx.font = '800 190px ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillText('PROJECTS', width / 2, height / 2)
+    if ('letterSpacing' in ctx) ctx.letterSpacing = '8px'
+    ctx.lineJoin = 'round'; ctx.lineWidth = 22; ctx.strokeStyle = '#2b1240'
+    ctx.strokeText('PROJECTS', width / 2, height / 2, width - 60)
+    ctx.fillStyle = '#fff4cf'
+    ctx.fillText('PROJECTS', width / 2, height / 2, width - 60)
   })
-  mesh(new THREE.PlaneGeometry(0.27, 0.09), new THREE.MeshBasicMaterial({ map: projectsLabel, transparent: true, depthWrite: false }), 'projects_box_label', projectsBox, 0, 0.09, 0.141)
+  mesh(new THREE.PlaneGeometry(0.33, 0.12), new THREE.MeshBasicMaterial({ map: projectsLabel, transparent: true, depthWrite: false, toneMapped: false }), 'projects_box_label', projectsBox, 0, 0.088, 0.141)
+  projectsBox.userData.focus = 'box'
   mesh(box(0.045, 0.025, 0.012), gold, 'projects_box_latch', projectsBox, 0, 0.17, 0.156)
   const notebookStack = stack('notebooks', -0.85, -0.16, [
     { w: 0.148, h: 0.013, d: 0.21, c: 0xff5fae, r: 0.1, t: 0.003, rough: 0.7 },
@@ -408,17 +413,18 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
       ['CV', 'Resume', links.resume, '#fff0a6', 0.185, 0.02],
     ].filter(([, , url]) => url)
     stickyDefs.forEach(([glyph, label, url, col, x, r]) => {
-      const tex = canvasTex(256, 256, (g, w, h) => {
+      // 512px and heavy type: on a phone the note is only a few dozen px wide
+      const tex = canvasTex(512, 512, (g, w, h) => {
         g.fillStyle = col; g.fillRect(0, 0, w, h)
-        g.fillStyle = 'rgba(0,0,0,.07)'; g.fillRect(0, 0, w, 26)
-        g.fillStyle = '#2a1e33'; g.beginPath(); g.arc(w / 2, 88, 48, 0, 7); g.fill()
-        g.fillStyle = '#fff'; g.font = '700 ' + (glyph.length > 2 ? 40 : 52) + 'px "Cormorant Garamond",Georgia,serif'; g.textAlign = 'center'; g.fillText(glyph, w / 2, glyph.length > 2 ? 102 : 106)
-        g.fillStyle = '#2a1e33'; g.font = '500 54px Caveat,"Bradley Hand",cursive'; g.fillText(label, w / 2, 190)
-        g.font = '500 30px Caveat,"Bradley Hand",cursive'; g.fillStyle = 'rgba(42,30,51,.65)'; g.fillText('open ↗', w / 2, 232)
+        g.fillStyle = 'rgba(0,0,0,.07)'; g.fillRect(0, 0, w, 40)
+        g.fillStyle = '#2a1e33'; g.beginPath(); g.arc(w / 2, 175, 112, 0, 7); g.fill()
+        g.fillStyle = '#fff'; g.font = '700 ' + (glyph.length > 2 ? 92 : 120) + 'px "Cormorant Garamond",Georgia,serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(glyph, w / 2, 182)
+        g.fillStyle = '#2a1e33'; g.font = '700 124px Caveat,"Bradley Hand",cursive'; g.fillText(label, w / 2, 378)
+        g.font = '700 54px Caveat,"Bradley Hand",cursive'; g.fillStyle = 'rgba(42,30,51,.8)'; g.fillText('open ↗', w / 2, 466)
       })
       const n = mesh(box(0.165, 0.2, 0.004), null, 'sticky_' + label, bd, x, 0.0, 0.024)
       n.material = [M(col, { roughness: 0.85 }), M(col, { roughness: 0.85 }), M(col, { roughness: 0.85 }), M(col, { roughness: 0.85 }), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.85, name: 'sticky_' + label }), M(col, { roughness: 0.85 })]
-      n.rotation.z = r; n.userData = { url, r, h: 0, label }; stickies.push(n)
+      n.rotation.z = r; n.userData = { url, r, h: 0, label, focus: 'board' }; stickies.push(n)
     })
     const bench = new THREE.Group(); bench.name = 'pink_bench'; bench.position.set(-1.42, 0, -0.27); scene.add(bench)
     mesh(box(0.6, 0.28, 0.32), M(0xf3569f, { roughness: 0.55, name: 'bench_pink' }), 'bench_body', bench, 0, 0.14, 0)
@@ -659,13 +665,49 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
   const labelPlate = mesh(new THREE.PlaneGeometry(0.06, 0.03), new THREE.MeshBasicMaterial({ map: switchLabel, toneMapped: false }), 'switch_label', switchG, 0, -0.075, 0.007); labelPlate.castShadow = false
 
   /* ---------- camera, resize, loop ---------- */
-  const target = new THREE.Vector3(0.0, 0.8, 0.1)
-  let camDist = 2.6
+  // the camera eases from `view` toward `goal`; goal is the room overview or a focused spot
+  const view = { look: new THREE.Vector3(0.0, 0.8, 0.1), eye: new THREE.Vector3(0.0, 1.35, 2.6) }
+  const goal = { look: view.look.clone(), eye: view.eye.clone() }
+  let focused = null
+  // distance from which a (halfW × halfH) area fills the screen
+  const fitDist = (halfW, halfH) => {
+    const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
+    return Math.max(halfW / (tan * camera.aspect), halfH / tan)
+  }
+  const focusSpot = (key) => {
+    if (key === 'board') {
+      const bd = stickies.find((n) => n.userData.focus === 'board')?.parent
+      return bd && { at: bd.localToWorld(new THREE.Vector3(0, 0, 0.03)), halfW: 0.44, halfH: 0.36, rise: 0.06 }
+    }
+    if (key === 'box') return { at: projectsBox.localToWorld(new THREE.Vector3(0, 0.1, 0.14)), halfW: 0.3, halfH: 0.22, rise: 0.22 }
+    return null
+  }
+  function updateGoal() {
+    const spot = focused && focusSpot(focused)
+    if (spot) {
+      const d = fitDist(spot.halfW, spot.halfH)
+      goal.look.copy(spot.at)
+      goal.eye.set(spot.at.x, spot.at.y + spot.rise, spot.at.z + d)
+      return
+    }
+    // portrait phones: frame board → projects box instead of the whole room, so things stay readable
+    const portrait = camera.aspect < 1
+    const x = portrait ? -0.5 : 0.0
+    goal.look.set(x, portrait ? 1.0 : 0.8, 0.1)
+    goal.eye.set(x, 1.35, Math.max(1.9, fitDist(portrait ? 1.12 : 1.45, 0.55)))
+  }
+  function setFocus(key) {
+    if (focused === key) return
+    focused = key
+    updateGoal()
+    if (onFocusChange) onFocusChange(!!key)
+  }
+  let firstResize = true
   function resize() {
     const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight; renderer.setSize(w, h, false)
-    camera.aspect = w / h
-    const need = 1.45 / (Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect)
-    camDist = Math.max(1.9, need, 0.55 / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))); camera.updateProjectionMatrix()
+    camera.aspect = w / h; camera.updateProjectionMatrix()
+    updateGoal()
+    if (firstResize) { firstResize = false; view.look.copy(goal.look); view.eye.copy(goal.eye) }
   }
   const mouse = { x: 0, y: 0, sx: 0, sy: 0 }
   const onPointerMoveMouse = (e) => { const r = canvas.getBoundingClientRect(); mouse.x = (e.clientX - r.left) / r.width * 2 - 1; mouse.y = (e.clientY - r.top) / r.height * 2 - 1 }
@@ -681,9 +723,13 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
     nightK += ((night ? 1 : 0) - nightK) * 0.06
     if (Math.abs((night ? 1 : 0) - nightK) < 0.002) nightK = night ? 1 : 0
     mouse.sx += (mouse.x - mouse.sx) * 0.04; mouse.sy += (mouse.y - mouse.sy) * 0.04
-    const dr = TW.drift ? 1 : 0, px = TW.parallax
-    camera.position.set(0.0 + mouse.sx * 0.14 * px + Math.sin(t * 0.13) * 0.1 * dr, 1.35 - mouse.sy * 0.05 * px + Math.sin(t * 0.19) * 0.03 * dr, camDist)
-    camera.lookAt(target)
+    const ease = reduce ? 1 : 0.07
+    view.look.lerp(goal.look, ease); view.eye.lerp(goal.eye, ease)
+    // drift and parallax would swing a close-up around, so calm them while focused
+    const calm = focused ? 0.2 : 1
+    const dr = (TW.drift ? 1 : 0) * calm, px = TW.parallax * calm
+    camera.position.set(view.eye.x + mouse.sx * 0.14 * px + Math.sin(t * 0.13) * 0.1 * dr, view.eye.y - mouse.sy * 0.05 * px + Math.sin(t * 0.19) * 0.03 * dr, view.eye.z)
+    camera.lookAt(view.look)
     // day / night lighting
     hemi.intensity = L(0.5, 0.1)
     key.intensity = L(0.5, 0.06)
@@ -776,6 +822,13 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
   const onPointerCancel = () => { down = null; setHover(null) }
   const activate = (e) => {
     const hit = pick(e)
+    if (e.pointerType !== 'mouse') {
+      // touch: small things (board notes, projects box) zoom in first, the next tap opens;
+      // tapping empty space while zoomed goes back to the room
+      if (!hit) { if (focused) setFocus(null); return }
+      const spot = hit.userData.focus
+      if (spot && focused !== spot) { setFocus(spot); return }
+    }
     if (!hit) return
     const { url, action } = hit.userData
     if (url) window.open(url, '_blank', 'noopener')
@@ -837,5 +890,5 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
     canvas.remove()
   }
 
-  return { dispose, toggleNight, isNight: () => night }
+  return { dispose, toggleNight, isNight: () => night, unfocus: () => setFocus(null) }
 }

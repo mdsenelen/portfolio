@@ -86,6 +86,25 @@ body {
   animation: hint-out 1s ease 9s forwards;
 }
 
+/* shown while the camera is zoomed onto the board or the projects box (touch) */
+.room__back {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 6;
+  min-height: 44px;
+  padding: 8px 18px;
+  border: 1px solid rgba(42, 30, 51, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 6px 24px rgba(42, 30, 51, 0.18);
+  font-family: Caveat, 'Bradley Hand', cursive;
+  font-size: 22px;
+  color: #4a3560;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
 @keyframes hint-out {
   to {
     opacity: 0;
