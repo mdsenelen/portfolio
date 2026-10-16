@@ -662,13 +662,13 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
   const target = new THREE.Vector3(0.0, 0.8, 0.1)
   let camDist = 2.6
   function resize() {
-    const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false)
+    const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight; renderer.setSize(w, h, false)
     camera.aspect = w / h
     const need = 1.45 / (Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect)
     camDist = Math.max(1.9, need, 0.55 / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))); camera.updateProjectionMatrix()
   }
   const mouse = { x: 0, y: 0, sx: 0, sy: 0 }
-  const onPointerMoveMouse = (e) => { mouse.x = e.clientX / innerWidth * 2 - 1; mouse.y = e.clientY / innerHeight * 2 - 1 }
+  const onPointerMoveMouse = (e) => { const r = canvas.getBoundingClientRect(); mouse.x = (e.clientX - r.left) / r.width * 2 - 1; mouse.y = (e.clientY - r.top) / r.height * 2 - 1 }
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
   const clock = new THREE.Clock(); let lastScr = -1; let rafId = 0
   const L = (a, b) => a + (b - a) * nightK
@@ -720,25 +720,61 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
   const interactive = [...stickies, laptop, switchG, projectsBox, notebookStack.g]
   if (guitar.userData.action) interactive.push(guitar)
   if (cup.userData.action) interactive.push(cup)
-  function pick(e) {
-    v.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1)
+  // raycast one screen point; returns the nearest interactive object and its distance
+  function pickAt(clientX, clientY) {
+    const r = canvas.getBoundingClientRect()
+    v.set((clientX - r.left) / r.width * 2 - 1, -((clientY - r.top) / r.height) * 2 + 1)
     ray.setFromCamera(v, camera)
     const hit = ray.intersectObjects(interactive, true)[0]
     if (!hit) return null
     let o = hit.object
     while (o && !o.userData.url && !o.userData.action) o = o.parent
-    return o || null
+    return o ? { object: o, distance: hit.distance } : null
+  }
+  // fingers are ~40px wide while stickies can be a few px on a phone:
+  // when the exact point misses, sample a ring around it
+  function pickNear(clientX, clientY) {
+    // inner ring first, so the closest hit to the finger wins
+    for (const radius of [10, 20]) {
+      for (let i = 0; i < 8; i++) {
+        const a = i / 8 * Math.PI * 2
+        const hit = pickAt(clientX + Math.cos(a) * radius, clientY + Math.sin(a) * radius)
+        if (hit) return hit
+      }
+    }
+    return null
+  }
+  function pick(e) {
+    const hit = pickAt(e.clientX, e.clientY) || (e.pointerType !== 'mouse' ? pickNear(e.clientX, e.clientY) : null)
+    return hit ? hit.object : null
+  }
+  const setHover = (hit) => {
+    hovered = hit && hit.userData.url ? hit : null
+    laptopHover = !!(hit && hit.userData.action === 'desktop')
   }
   const onPointerMovePick = (e) => {
     if (disposed) return
-    if (e.target !== canvas) return
+    if (e.target !== canvas || e.pointerType !== 'mouse') return
     const hit = pick(e)
-    hovered = hit && hit.userData.url ? hit : null
-    laptopHover = !!(hit && hit.userData.action === 'desktop')
+    setHover(hit)
     canvas.style.cursor = hit ? 'pointer' : ''
   }
-  const onClick = (e) => {
-    if (disposed) return
+  // our own tap detection: `click` gets dropped on mobile when the finger drifts slightly
+  let down = null
+  const onPointerDown = (e) => {
+    if (disposed || !e.isPrimary) return
+    down = { x: e.clientX, y: e.clientY, t: performance.now() }
+    if (e.pointerType !== 'mouse') setHover(pick(e)) // visual feedback on touch
+  }
+  const onPointerUp = (e) => {
+    if (disposed || !down || !e.isPrimary) return
+    const tap = Math.hypot(e.clientX - down.x, e.clientY - down.y) < 12 && performance.now() - down.t < 600
+    down = null
+    if (e.pointerType !== 'mouse') setTimeout(() => setHover(null), 220)
+    if (tap) activate(e)
+  }
+  const onPointerCancel = () => { down = null; setHover(null) }
+  const activate = (e) => {
     const hit = pick(e)
     if (!hit) return
     const { url, action } = hit.userData
@@ -760,7 +796,11 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
   addEventListener('resize', resize)
   addEventListener('pointermove', onPointerMoveMouse)
   addEventListener('pointermove', onPointerMovePick)
-  canvas.addEventListener('click', onClick)
+  canvas.addEventListener('pointerdown', onPointerDown)
+  canvas.addEventListener('pointerup', onPointerUp)
+  canvas.addEventListener('pointercancel', onPointerCancel)
+  // mobile address bar showing/hiding resizes the visual viewport without always firing window resize
+  window.visualViewport?.addEventListener('resize', resize)
   resize()
   // fonts land after first paint; redraw the canvas textures that use them
   if (document.fonts && document.fonts.ready) {
@@ -780,7 +820,10 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
     removeEventListener('pointermove', onPointerMoveMouse)
     removeEventListener('pointermove', onPointerMovePick)
     dragListeners.forEach(([type, fn]) => removeEventListener(type, fn))
-    canvas.removeEventListener('click', onClick)
+    canvas.removeEventListener('pointerdown', onPointerDown)
+    canvas.removeEventListener('pointerup', onPointerUp)
+    canvas.removeEventListener('pointercancel', onPointerCancel)
+    window.visualViewport?.removeEventListener('resize', resize)
     scene.traverse((o) => {
       if (o.geometry) o.geometry.dispose()
       const mats = Array.isArray(o.material) ? o.material : o.material ? [o.material] : []
