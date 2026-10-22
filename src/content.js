@@ -3,7 +3,7 @@
 
 export const profile = {
   name: 'Merve Deniz Senelen',
-  role: 'Full-stack software engineer',
+  role: 'Frontend engineer',
   intro:
     'Frontend-focused full-stack engineer building React, Next.js and TypeScript products, with backend work in Node.js, AWS Lambda and FastAPI.',
   location: 'Berlin, Germany',
