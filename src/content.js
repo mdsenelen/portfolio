@@ -8,7 +8,6 @@ export const profile = {
     'Frontend-focused full-stack engineer building React, Next.js and TypeScript products, with backend work in Node.js, AWS Lambda and FastAPI.',
   location: 'Berlin, Germany',
   email: 'mervedenizsenlen@gmail.com',
-  instagram: 'https://www.instagram.com/mdenizsenelenn/',
   mediumHref: 'https://medium.com/@mdsenelen',
   youtubeTrackIds: ['W_NcoP44AFI', '8g-aABfzo3g'],
   youtubeTrackHref: 'https://www.youtube.com/watch?v=W_NcoP44AFI',

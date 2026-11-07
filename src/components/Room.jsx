@@ -154,7 +154,6 @@ export default function Room() {
         github: hrefOf('GitHub'),
         linkedin: hrefOf('LinkedIn'),
         resume: profile.resumeHref,
-        instagram: profile.instagram,
         email: profile.email ? `mailto:${profile.email}` : '',
         hobby: profile.hobby?.href || '',
         medium: profile.mediumHref,
@@ -292,7 +291,6 @@ export default function Room() {
           {hrefOf('LinkedIn') && <li><a href={hrefOf('LinkedIn')} target="_blank" rel="noreferrer">LinkedIn</a></li>}
           {profile.resumeHref && <li><a href={profile.resumeHref}>Resume (PDF)</a></li>}
           {profile.email && <li><a href={`mailto:${profile.email}`}>Email {profile.name}</a></li>}
-          {profile.instagram && <li><a href={profile.instagram} target="_blank" rel="noreferrer">Instagram</a></li>}
           {profile.hobby?.href && <li><a href={profile.hobby.href} target="_blank" rel="noreferrer">{profile.hobby.label}</a></li>}
           <li><button type="button" onClick={() => roomRef.current?.toggleNight()}>Toggle day / night mode</button></li>
           <li><button type="button" onClick={() => setProjectsOpen(true)}>Open selected projects</button></li>

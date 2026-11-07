@@ -430,29 +430,6 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
     mesh(box(0.6, 0.28, 0.32), M(0xf3569f, { roughness: 0.55, name: 'bench_pink' }), 'bench_body', bench, 0, 0.14, 0)
     ;[-0.15, 0.15].forEach((x, i) => mesh(box(0.26, 0.18, 0.01), M(0xff8cc6, { roughness: 0.5, name: 'bench_drawer' }), 'bench_drawer_' + i, bench, x, 0.14, 0.165))
     mesh(box(0.64, 0.025, 0.34), M(0xd9a35f, { roughness: 0.5, name: 'bench_top' }), 'bench_top', bench, 0, 0.2925, 0)
-    const phCv = document.createElement('canvas'); phCv.width = 256; phCv.height = 320
-    const phTex = new THREE.CanvasTexture(phCv); phTex.colorSpace = THREE.SRGBColorSpace; phTex.anisotropy = aniso
-    function drawPhoto(img) {
-      const g = phCv.getContext('2d')
-      if (img) { const r = Math.max(256 / img.width, 270 / img.height), w = img.width * r, h = img.height * r; g.drawImage(img, (256 - w) / 2, (270 - h) / 2, w, h) }
-      else { const bg = g.createLinearGradient(0, 0, 0, 270); bg.addColorStop(0, '#ffd1ec'); bg.addColorStop(1, '#c9a8ee'); g.fillStyle = bg; g.fillRect(0, 0, 256, 270); g.fillStyle = '#7a5aa8'; g.beginPath(); g.arc(128, 105, 50, 0, 7); g.fill(); g.beginPath(); g.ellipse(128, 262, 92, 78, 0, Math.PI, 0); g.fill() }
-      const ig = g.createLinearGradient(0, 270, 256, 320); ig.addColorStop(0, '#feda75'); ig.addColorStop(0.45, '#d62976'); ig.addColorStop(1, '#962fbf'); g.fillStyle = ig; g.fillRect(0, 270, 256, 50)
-      g.fillStyle = '#fff'; g.font = '600 30px "Cormorant Garamond",Georgia,serif'; g.textAlign = 'center'; g.fillText('instagram ↗', 128, 305); g.textAlign = 'left'
-      phTex.needsUpdate = true
-    }
-    drawPhoto(null)
-    const publicPhoto = new Image()
-    publicPhoto.onload = () => drawPhoto(publicPhoto)
-    publicPhoto.src = '/PXL_20260906_170423277.jpg'
-    const onDragOver = (e) => e.preventDefault()
-    const onDrop = (e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (!f || !f.type.startsWith('image/')) return; const im = new Image(); im.onload = () => { drawPhoto(im); try { localStorage.setItem('ws_profile_photo', phCv.toDataURL('image/jpeg', 0.8)) } catch { /* quota */ } }; im.src = URL.createObjectURL(f) }
-    addEventListener('dragover', onDragOver)
-    addEventListener('drop', onDrop)
-    dragListeners.push(['dragover', onDragOver], ['drop', onDrop])
-    const fg = new THREE.Group(); fg.name = 'profile_frame'; fg.position.set(-0.12, 0.392, 0.03); fg.rotation.y = 0.3; bench.add(fg)
-    mesh(box(0.125, 0.17, 0.012), M(0xff4fa3, { roughness: 0.4, name: 'photo_frame' }), 'photo_frame', fg, 0, 0, 0)
-    const pm = mesh(new THREE.PlaneGeometry(0.105, 0.131), new THREE.MeshBasicMaterial({ map: phTex, toneMapped: false, name: 'profile_photo' }), 'profile_photo', fg, 0, 0.004, 0.0065); pm.castShadow = false
-    if (links.instagram) { pm.userData = { url: links.instagram, h: 0, group: fg, label: 'instagram' }; stickies.push(pm) }
     mesh(new THREE.CylinderGeometry(0.035, 0.028, 0.06, 20), M(0x8ccf3a, { name: 'plant_pot' }), 'plant_pot', bench, 0.14, 0.335, 0)
     ;[[0, 0.07], [0.03, 0.05], [-0.03, 0.05]].forEach(([dx, dy], i) => mesh(new THREE.SphereGeometry(0.03, 14, 10), M(0xff7ac0, { name: 'plant_bloom' }), 'bloom_' + i, bench, 0.14 + dx, 0.365 + dy, 0))
     const stool = new THREE.Group(); stool.name = 'red_stool'; stool.position.set(0.32, 0, 0.78); scene.add(stool)
@@ -495,29 +472,6 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
     const p2 = rbox(0.27, 0.27, 0.09, 0.04, M(0xff5fae, { roughness: 0.9, name: 'pillow_pink' }), 'pillow_pink', couch, 0.2, 0.5, -0.13); p2.rotation.set(-0.25, -0.12, -0.15)
     const ft = M(0x2a1a12, { roughness: 0.6, name: 'couch_feet' })
     ;[-1, 1].forEach(sx => [-1, 1].forEach(sz => mesh(new THREE.CylinderGeometry(0.025, 0.02, 0.05, 12), ft, 'couch_foot', couch, sx * 0.48, 0.025, sz * 0.33)))
-  }
-
-  /* ---------- wall TV (left wall) ---------- */
-  {
-    const tv = new THREE.Group(); tv.name = 'tv'; tv.position.set(-1.73, 1.0, 0.12); tv.rotation.y = Math.PI / 2; scene.add(tv)
-    const cv = document.createElement('canvas'); cv.width = 800; cv.height = 500
-    function drawTV() {
-      const g = cv.getContext('2d')
-      g.fillStyle = '#f4f2f2'; g.fillRect(0, 0, 800, 500)
-      g.fillStyle = '#050506'; g.fillRect(18, 18, 764, 464)
-      g.fillStyle = '#ffffff'; g.font = 'italic 600 58px "Cormorant Garamond",Georgia,serif'; g.fillText('as', 150, 150); g.font = 'italic 700 80px "Cormorant Garamond",Georgia,serif'; g.fillText('SEEN', 205, 150); g.font = 'italic 600 58px "Cormorant Garamond",Georgia,serif'; g.fillText('on', 395, 150)
-      g.font = '900 260px Impact,"Arial Black",sans-serif'; g.lineJoin = 'round'; g.lineWidth = 16; g.strokeStyle = '#ff2f93'; g.strokeText('TV', 300, 400); g.fillStyle = '#ffffff'; g.fillText('TV', 300, 400)
-      g.fillStyle = '#ff2f93'; g.beginPath(); g.moveTo(80, 230); g.lineTo(215, 215); g.lineTo(235, 440); g.lineTo(98, 455); g.closePath(); g.fill()
-      g.strokeStyle = '#ff2f93'; g.lineWidth = 8; g.beginPath(); g.moveTo(130, 228); g.quadraticCurveTo(140, 168, 190, 178); g.stroke()
-      g.fillStyle = '#fff'; g.font = 'italic 700 78px "Cormorant Garamond",Georgia,serif'; g.fillText('B', 125, 370)
-      ;['#ff2f93', '#ffffff', '#ff2f93', '#ffffff', '#000'].forEach((c, i) => { g.fillStyle = c; g.fillRect(18, 428 + i * 10, 764, 7) })
-      g.fillStyle = '#050506'; g.fillRect(18, 478, 764, 4)
-      tvTex.needsUpdate = true
-    }
-    const tvTex = new THREE.CanvasTexture(cv); tvTex.colorSpace = THREE.SRGBColorSpace; tvTex.anisotropy = aniso
-    drawTV()
-    mesh(box(1.2, 0.76, 0.05), M(0xf4f2f2, { roughness: 0.4, name: 'tv_casing_white' }), 'tv_casing', tv, 0, 0, 0.025)
-    const sc = mesh(new THREE.PlaneGeometry(1.18, 0.7375), new THREE.MeshBasicMaterial({ map: tvTex, toneMapped: false, name: 'tv_screen' }), 'tv_screen', tv, 0, 0, 0.0515); sc.castShadow = sc.receiveShadow = false
   }
 
   /* ---------- paper lanterns (the two ceiling lights) ---------- */
