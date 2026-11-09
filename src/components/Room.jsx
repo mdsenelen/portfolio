@@ -153,7 +153,6 @@ export default function Room() {
       links: {
         github: hrefOf('GitHub'),
         linkedin: hrefOf('LinkedIn'),
-        resume: profile.resumeHref,
         email: profile.email ? `mailto:${profile.email}` : '',
         hobby: profile.hobby?.href || '',
         medium: profile.mediumHref,

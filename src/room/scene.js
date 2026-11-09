@@ -408,9 +408,8 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
     const zp = mesh(new THREE.PlaneGeometry(0.56, 0.44), new THREE.MeshStandardMaterial({ map: boardTexture, roughness: 0.9, name: 'leopard_noticeboard' }), 'leopard_noticeboard', bd, 0, 0, 0.0205); zp.castShadow = false
     bd.scale.setScalar(1.2)
     const stickyDefs = [
-      ['in', 'LinkedIn', links.linkedin, '#c3dd9c', -0.185, 0.02],
-      ['</>', 'GitHub', links.github, '#ffb6d6', 0, -0.02],
-      ['CV', 'Resume', links.resume, '#fff0a6', 0.185, 0.02],
+      ['in', 'LinkedIn', links.linkedin, '#c3dd9c', -0.1, 0.02],
+      ['</>', 'GitHub', links.github, '#ffb6d6', 0.1, -0.02],
     ].filter(([, , url]) => url)
     stickyDefs.forEach(([glyph, label, url, col, x, r]) => {
       // 512px and heavy type: on a phone the note is only a few dozen px wide
