@@ -9,8 +9,8 @@ export const profile = {
   location: 'Berlin, Germany',
   email: 'mervedenizsenlen@gmail.com',
   mediumHref: 'https://medium.com/@mdsenelen',
-  youtubeTrackIds: ['W_NcoP44AFI', '8g-aABfzo3g'],
-  youtubeTrackHref: 'https://www.youtube.com/watch?v=W_NcoP44AFI',
+  youtubeTrackIds: ['8g-aABfzo3g'],
+  youtubeTrackHref: 'https://www.youtube.com/watch?v=8g-aABfzo3g',
   links: [
     { label: 'GitHub', href: 'https://github.com/mdsenelen' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/mdenizsenelen' },

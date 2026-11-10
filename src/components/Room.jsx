@@ -67,9 +67,9 @@ export default function Room() {
             if (event.data === YT.PlayerState.PLAYING) setMusicState('playing')
             else if (event.data === YT.PlayerState.PAUSED) setMusicState('paused')
             else if (event.data === YT.PlayerState.ENDED) {
-              if (youtubeTrackIndexRef.current === 0) {
-                youtubeTrackIndexRef.current = 1
-                youtubePlayerRef.current?.loadVideoById(profile.youtubeTrackIds[1])
+              if (youtubeTrackIndexRef.current < profile.youtubeTrackIds.length - 1) {
+                youtubeTrackIndexRef.current += 1
+                youtubePlayerRef.current?.loadVideoById(profile.youtubeTrackIds[youtubeTrackIndexRef.current])
               } else {
                 setMusicState('stopped')
               }
