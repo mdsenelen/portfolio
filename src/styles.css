@@ -1,4 +1,10 @@
-/* Room portfolio — fullscreen 3D canvas + fake-desktop overlay */
+/* Room portfolio — fullscreen 3D canvas + fake-desktop overlay
+   Two faces: Shrikhand (display) and Chakra Petch (everything else). */
+
+:root {
+  --font-display: 'Shrikhand', 'Arial Rounded MT Bold', sans-serif;
+  --font-body: 'Chakra Petch', ui-sans-serif, system-ui, sans-serif;
+}
 
 *,
 *::before,
@@ -12,7 +18,7 @@ body {
   height: 100%;
   overflow: hidden;
   background: #c9b3ea;
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: var(--font-body);
   color: #2a1e33;
 }
 
@@ -24,8 +30,8 @@ body {
   display: grid;
   place-items: center;
   height: 100%;
-  font-size: 22px;
-  font-style: italic;
+  font-family: var(--font-display);
+  font-size: 24px;
   color: #4a3560;
 }
 
@@ -78,8 +84,9 @@ body {
   background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(42, 30, 51, 0.14);
   box-shadow: 0 6px 24px rgba(42, 30, 51, 0.18);
-  font-family: Caveat, 'Bradley Hand', cursive;
-  font-size: 20px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
   color: #4a3560;
   pointer-events: none;
   z-index: 5;
@@ -98,8 +105,9 @@ body {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.88);
   box-shadow: 0 6px 24px rgba(42, 30, 51, 0.18);
-  font-family: Caveat, 'Bradley Hand', cursive;
-  font-size: 22px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 16px;
   color: #4a3560;
   cursor: pointer;
   touch-action: manipulation;
@@ -149,13 +157,13 @@ body {
 
 .room__project-source {
   color: #6b5b70;
-  font: 600 11px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+  font: 600 12px/1.2 var(--font-body);
   text-transform: uppercase;
 }
 
 .room__projects-header h1 {
   margin: 5px 0 0;
-  font: 600 32px/1.1 'Cormorant Garamond', Georgia, serif;
+  font: 400 30px/1.1 var(--font-display);
 }
 
 .room__projects-header button {
@@ -167,7 +175,7 @@ body {
   background: transparent;
   color: #4a3560;
   cursor: pointer;
-  font: 30px/1 ui-sans-serif, system-ui, sans-serif;
+  font: 30px/1 var(--font-body);
 }
 
 .room__projects-header button:hover {
@@ -195,12 +203,12 @@ body {
 
 .room__project-item h2 {
   margin: 0 0 8px;
-  font: 600 29px/1.1 'Cormorant Garamond', Georgia, serif;
+  font: 400 24px/1.15 var(--font-display);
 }
 
 .room__project-item p {
   margin: 0;
-  font: 18px/1.42 'Cormorant Garamond', Georgia, serif;
+  font: 16px/1.55 var(--font-body);
 }
 
 .room__project-footer {
@@ -211,7 +219,7 @@ body {
   margin-top: 18px;
   padding-top: 12px;
   border-top: 1px solid rgba(42, 30, 51, 0.14);
-  font: 15px/1.3 ui-sans-serif, system-ui, sans-serif;
+  font: 15px/1.3 var(--font-body);
 }
 
 .room__project-footer a {
@@ -235,7 +243,7 @@ body {
   border: 1px solid rgba(42, 30, 51, 0.16);
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.56);
-  font: 13px/1.25 ui-sans-serif, system-ui, sans-serif;
+  font: 13px/1.25 var(--font-body);
 }
 
 @keyframes projects-dialog-in {
@@ -257,7 +265,7 @@ body {
   }
 
   .room__projects-header h1 {
-    font-size: 27px;
+    font-size: 26px;
   }
 
   .room__projects-list {
@@ -270,11 +278,11 @@ body {
   }
 
   .room__project-item h2 {
-    font-size: 25px;
+    font-size: 21px;
   }
 
   .room__project-item p {
-    font-size: 17px;
+    font-size: 15px;
   }
 }
 
@@ -290,7 +298,7 @@ body {
   background: #f7f2ea;
   box-shadow: 0 8px 24px rgba(42, 30, 51, 0.28);
   color: #2a1e33;
-  font: 13px/1.3 ui-sans-serif, system-ui, sans-serif;
+  font: 13px/1.3 var(--font-body);
 }
 
 .room__music-preload {
@@ -373,7 +381,7 @@ body {
   inset: 0;
   z-index: 20;
   overflow: hidden;
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   color: #2a1e33;
 }
 
@@ -409,7 +417,8 @@ body {
 }
 
 .desktop__brand {
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 15px;
 }
 
 .desktop__menu {
@@ -592,6 +601,12 @@ body {
   gap: 8px;
 }
 
+.win__project-head strong {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 16px;
+}
+
 .win__project p {
   margin: 6px 0 8px;
   font-size: 13.5px;
@@ -633,14 +648,15 @@ body {
 
 .win__readme h2 {
   margin: 0 0 2px;
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 26px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 24px;
 }
 
 .win__role {
   margin: 0 0 12px;
   color: #8a6a9a;
-  font-style: italic;
+  font-weight: 600;
 }
 
 .win__readme p {
@@ -760,7 +776,7 @@ body {
   }
 
   .room__hint {
-    font-size: 17px;
+    font-size: 14px;
     width: calc(100% - 32px);
     text-align: center;
   }

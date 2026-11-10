@@ -51,6 +51,8 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
     m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize())
     m.castShadow = true; parent.add(m); return m
   }
+  // canvas textures drawn with web fonts; redrawn once the fonts have loaded
+  const fontTexs = []
   function redraw(tex) {
     const c = tex.image
     tex.userData.draw(c.getContext('2d'), c.width, c.height)
@@ -163,7 +165,7 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
     g.fillStyle = bg; g.fillRect(0, 0, w, h)
     g.fillStyle = 'rgba(255,255,255,.55)'; g.fillRect(0, 0, w, 30)
     g.fillStyle = '#1b1320'; rr(g, w / 2 - 70, -10, 140, 30, 12); g.fill()
-    g.fillStyle = '#3a2a45'; g.font = '600 17px ui-sans-serif,system-ui,sans-serif'; g.fillText('Code    File    Edit    View', 24, 21)
+    g.fillStyle = '#3a2a45'; g.font = '600 17px "Chakra Petch",ui-sans-serif,system-ui,sans-serif'; g.fillText('Code    File    Edit    View', 24, 21)
     rr(g, 130, 100, 764, 400, 16); g.fillStyle = '#241b2e'; g.fill()
     g.fillStyle = '#2f2440'; rr(g, 130, 100, 764, 46, 16); g.fill(); g.fillRect(130, 130, 764, 16);
     ['#ff6b9a', '#ffd166', '#7be08a'].forEach((c, i) => { g.fillStyle = c; g.beginPath(); g.arc(160 + i * 28, 123, 8, 0, 7); g.fill() })
@@ -217,11 +219,12 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
     if (opts.projectLabel) {
       const label = canvasTex(1024, 128, (ctx, width, height) => {
         ctx.fillStyle = opts.labelInk || '#f7f2ea'
-        ctx.font = '700 88px ui-sans-serif,system-ui,sans-serif'
+        ctx.font = '700 88px "Chakra Petch",ui-sans-serif,system-ui,sans-serif'
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
         ctx.fillText(opts.projectLabel, width / 2, height / 2)
       })
+      fontTexs.push(label)
       const title = mesh(new THREE.PlaneGeometry(d - 0.014, h - 0.004), new THREE.MeshBasicMaterial({ map: label, transparent: true, depthWrite: false }), name + '_project_label', g, -w / 2 - t / 2 - 0.0002, h / 2, 0)
       title.rotation.y = -Math.PI / 2
       title.castShadow = false
@@ -247,10 +250,10 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
   const boxLid = M(0xd9a21b, { roughness: 0.42, name: 'projects_box_lid' })
   mesh(box(0.36, 0.17, 0.28), boxBody, 'projects_box_body', projectsBox, 0, 0.085, 0)
   mesh(box(0.38, 0.035, 0.30), boxLid, 'projects_box_lid', projectsBox, 0, 0.1875, 0)
-  // the site's Caveat, bolder and with a thin dark outline so it holds up on purple at phone size
+  // the site's display face, with a thin dark outline so it holds up on purple at phone size
   const projectsLabel = canvasTex(1024, 340, (ctx, width, height) => {
     ctx.clearRect(0, 0, width, height)
-    ctx.font = '700 150px Caveat,"Bradley Hand",cursive'
+    ctx.font = '400 120px Shrikhand,"Arial Rounded MT Bold",sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.lineJoin = 'round'; ctx.lineWidth = 10; ctx.strokeStyle = 'rgba(43,18,64,.85)'
@@ -369,7 +372,7 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
     g.fillStyle = '#fbf7ec'; g.fillRect(0, 0, w, h)
     g.strokeStyle = 'rgba(110,150,200,.45)'; g.lineWidth = 2; for (let y = 90; y < h; y += 42) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke() }
     g.strokeStyle = 'rgba(230,80,110,.5)'; g.beginPath(); const mx = side ? 54 : w - 54; g.moveTo(mx, 0); g.lineTo(mx, h); g.stroke()
-    g.fillStyle = '#1f3a8a'; g.strokeStyle = '#1f3a8a'; g.lineWidth = 3.5; g.font = '500 38px Caveat,"Bradley Hand","Segoe Print",cursive'
+    g.fillStyle = '#1f3a8a'; g.strokeStyle = '#1f3a8a'; g.lineWidth = 3.5; g.font = '600 31px "Chakra Petch",ui-sans-serif,system-ui,sans-serif'
     if (!side) {
       g.fillText('system design', 40, 70)
       const bx = (x, y, l) => { g.strokeRect(x, y, 170, 70); g.fillText(l, x + 20, y + 48) }
@@ -417,9 +420,9 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
         g.fillStyle = col; g.fillRect(0, 0, w, h)
         g.fillStyle = 'rgba(0,0,0,.07)'; g.fillRect(0, 0, w, 40)
         g.fillStyle = '#2a1e33'; g.beginPath(); g.arc(w / 2, 175, 112, 0, 7); g.fill()
-        g.fillStyle = '#fff'; g.font = '700 ' + (glyph.length > 2 ? 92 : 120) + 'px "Cormorant Garamond",Georgia,serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(glyph, w / 2, 182)
-        g.fillStyle = '#2a1e33'; g.font = '700 124px Caveat,"Bradley Hand",cursive'; g.fillText(label, w / 2, 378)
-        g.font = '700 54px Caveat,"Bradley Hand",cursive'; g.fillStyle = 'rgba(42,30,51,.8)'; g.fillText('open ↗', w / 2, 466)
+        g.fillStyle = '#fff'; g.font = '400 ' + (glyph.length > 2 ? 84 : 112) + 'px Shrikhand,"Arial Rounded MT Bold",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(glyph, w / 2, 182)
+        g.fillStyle = '#2a1e33'; g.font = '400 96px Shrikhand,"Arial Rounded MT Bold",sans-serif'; g.fillText(label, w / 2, 378)
+        g.font = '600 48px "Chakra Petch",ui-sans-serif,system-ui,sans-serif'; g.fillStyle = 'rgba(42,30,51,.8)'; g.fillText('open ↗', w / 2, 466)
       })
       const n = mesh(box(0.165, 0.2, 0.004), null, 'sticky_' + label, bd, x, 0.0, 0.024)
       n.material = [M(col, { roughness: 0.85 }), M(col, { roughness: 0.85 }), M(col, { roughness: 0.85 }), M(col, { roughness: 0.85 }), new THREE.MeshStandardMaterial({ map: tex, roughness: 0.85, name: 'sticky_' + label }), M(col, { roughness: 0.85 })]
@@ -612,7 +615,7 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
   const switchNub = mesh(box(0.03, 0.042, 0.016), M(0xfaf6ee, { roughness: 0.35, name: 'switch_nub' }), 'switch_nub', switchG, 0, night ? -0.02 : 0.02, 0.016)
   const switchLabel = canvasTex(128, 64, (g, w, h) => {
     g.fillStyle = '#f2ece0'; g.fillRect(0, 0, w, h)
-    g.fillStyle = '#7a6f5a'; g.font = '600 22px ui-sans-serif,system-ui,sans-serif'; g.textAlign = 'center'
+    g.fillStyle = '#7a6f5a'; g.font = '600 21px "Chakra Petch",ui-sans-serif,system-ui,sans-serif'; g.textAlign = 'center'
     g.fillText('DAY', w / 2, 22); g.fillText('NIGHT', w / 2, 54)
   })
   const labelPlate = mesh(new THREE.PlaneGeometry(0.06, 0.03), new THREE.MeshBasicMaterial({ map: switchLabel, toneMapped: false }), 'switch_label', switchG, 0, -0.075, 0.007); labelPlate.castShadow = false
@@ -816,6 +819,8 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
       drawPage(pgL, 0); drawPage(pgR, 1)
       stickies.forEach(n => { const t = n.material[4]; if (t && t.map) redraw(t.map) })
       redraw(projectsLabel)
+      fontTexs.forEach(redraw)
+      redraw(switchLabel)
     })
   }
   tick()
