@@ -8,7 +8,6 @@ const ICONS = [
   { id: 'github', label: 'GitHub', glyph: '🐙', tint: '#e8e0f4' },
   { id: 'linkedin', label: 'LinkedIn', glyph: '💼', tint: '#c3dd9c' },
   { id: 'mail', label: 'Mail', glyph: '✉️', tint: '#c9b3ea' },
-  { id: 'resume', label: 'Resume.pdf', glyph: '📄', tint: '#ffe3bf' },
 ]
 
 const TITLES = {
@@ -17,7 +16,6 @@ const TITLES = {
   github: 'GitHub',
   linkedin: 'LinkedIn',
   mail: 'Mail',
-  resume: 'Resume.pdf',
 }
 
 function Clock() {
@@ -85,15 +83,6 @@ function WindowBody({ id, profile, about, skills, projects }) {
       <div className="win__link">
         <p>Coffee, a role, a project, or just to say hi</p>
         <a className="win__big" href={`mailto:${profile.email}`}>{profile.email}</a>
-      </div>
-    )
-  }
-  if (id === 'resume') {
-    return (
-      <div className="win__link">
-        <p>{profile.name} — curriculum vitae, PDF.</p>
-        <a className="win__big" href="/resume.pdf" download>download resume.pdf ↓</a>
-        <a className="win__alt" href="/resume.pdf" target="_blank" rel="noreferrer">or open in a new tab</a>
       </div>
     )
   }
