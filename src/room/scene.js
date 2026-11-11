@@ -5,7 +5,6 @@ import * as THREE from 'three'
 // links, profile copy, night mode and the desktop-view callback are injected instead.
 
 const TW = { sky: '#4aa8f0', wall: 'violet', drift: true, parallax: 1 }
-const NIGHT_KEY = 'room-night'
 
 export function createRoom({ container, links = {}, profile = {}, onOpenDesktop, onOpenProjects, onTrackPlay, onFocusChange }) {
   const canvas = document.createElement('canvas')
@@ -26,8 +25,8 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
   scene.background = bgDay.clone()
   const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 40)
 
-  let night = false
-  try { night = localStorage.getItem(NIGHT_KEY) === '1' } catch { /* storage unavailable */ }
+  // the room always opens at night; the light switch flips it for the current visit
+  let night = true
   let nightK = night ? 1 : 0
   let disposed = false
 
@@ -96,6 +95,8 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
   wall.castShadow = false
   const wallL = mesh(new THREE.PlaneGeometry(10, 3.6), wallMat, 'wall_left', room, -1.75, 1.8, 4.55); wallL.rotation.y = Math.PI / 2; wallL.castShadow = false
   const wallR = mesh(new THREE.PlaneGeometry(10, 3.6), wallMat, 'wall_right', room, 2.3, 1.8, 4.55); wallR.rotation.y = -Math.PI / 2; wallR.castShadow = false
+  // ceiling: tall phone screens see above the walls, so close the room off (same paint as the walls)
+  const ceiling = mesh(new THREE.PlaneGeometry(4.05, 10), wallMat, 'ceiling', room, 0.275, 3.6, 4.55); ceiling.rotation.x = Math.PI / 2; ceiling.castShadow = false
   const bbM = M(0xe0338a, { roughness: 0.5, name: 'baseboard_pink' })
   mesh(box(0.02, 0.12, 10), bbM, 'baseboard_left', room, -1.74, 0.06, 4.55)
   mesh(box(0.02, 0.12, 10), bbM, 'baseboard_right', room, 2.29, 0.06, 4.55)
@@ -482,15 +483,21 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
 
   /* ---------- paper lanterns (the two ceiling lights) ---------- */
   const lanterns = [], lamps = []
-  function lantern(x, z, hang, drop, color, name) {
-    const pivot = new THREE.Group(); pivot.name = name; pivot.position.set(x, hang, z); scene.add(pivot)
+  // cords run all the way up to the top of the walls (3.6) so they never end in mid-air
+  // on tall phone screens; the shade still hangs at `hang - drop`
+  const CORD_TOP = 3.6
+  function lantern(x, z, hang, shadeDrop, color, name) {
+    const drop = shadeDrop + (CORD_TOP - hang)
+    const pivot = new THREE.Group(); pivot.name = name; pivot.position.set(x, CORD_TOP, z); scene.add(pivot)
     const mat = M(color, { emissive: color, emissiveIntensity: 0.2, roughness: 0.9, name: name + '_paper' })
     const ball = new THREE.Mesh(new THREE.SphereGeometry(0.11, 32, 20), mat); ball.scale.y = 0.92; ball.position.y = -drop; ball.name = name + '_shade'; ball.castShadow = true; pivot.add(ball)
     const rib = M(new THREE.Color(color).multiplyScalar(0.45), { roughness: 0.8, name: name + '_rib' })
     ;[-0.07, -0.035, 0, 0.035, 0.07].forEach((dy, i) => { const r = Math.sqrt(0.11 * 0.11 - dy * dy) + 0.0012; const t = new THREE.Mesh(new THREE.TorusGeometry(r, 0.0016, 6, 48), rib); t.rotation.x = Math.PI / 2; t.position.y = -drop + dy * 0.92; t.name = name + '_ring_' + i; pivot.add(t) })
     const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.0013, 0.0013, drop, 6), M(0x2a2024, { name: 'cord' })); cord.position.y = -drop / 2; pivot.add(cord)
+    const canopy = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.018, 24), M(0xf3eeee, { roughness: 0.5, name: 'ceiling_canopy' })); canopy.position.set(x, CORD_TOP - 0.009, z); canopy.name = name + '_canopy'; scene.add(canopy)
     const l = new THREE.PointLight(color, 0, 3.5, 2); l.position.y = -drop; l.visible = false; pivot.add(l); lamps.push({ mat, l })
-    lanterns.push({ pivot, ph: Math.random() * 6 })
+    // longer pendulum: scale the sway angle down so the shade moves as much as before
+    lanterns.push({ pivot, ph: Math.random() * 6, sway: shadeDrop / drop })
   }
   lantern(-0.45, -0.05, 2.15, 0.55, 0x8fd448, 'lantern_green')
   lantern(0.85, -0.02, 2.08, 0.5, 0xf5a04a, 'lantern_orange')
@@ -701,7 +708,7 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
       o.l.visible = nightK > 0.02
     })
     switchNub.position.y = L(0.02, -0.02)
-    lanterns.forEach(l => { l.pivot.rotation.z = Math.sin(t * 0.6 + l.ph) * 0.035; l.pivot.rotation.x = Math.cos(t * 0.45 + l.ph) * 0.02 })
+    lanterns.forEach(l => { l.pivot.rotation.z = Math.sin(t * 0.6 + l.ph) * 0.035 * l.sway; l.pivot.rotation.x = Math.cos(t * 0.45 + l.ph) * 0.02 * l.sway })
     steam.forEach(s => {
       const u = (t * 0.16 + s.userData.p) % 1
       s.position.set(Math.sin(t * 0.9 + s.userData.ph + u * 5) * 0.012 * u * 3, 0.06 + u * 0.26, 0)
@@ -797,7 +804,6 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
   }
   function toggleNight() {
     night = !night
-    try { localStorage.setItem(NIGHT_KEY, night ? '1' : '0') } catch { /* storage unavailable */ }
     drawGarden(gardenCtx, TW.sky, night)
     gardenTexP.needsUpdate = true
   }
