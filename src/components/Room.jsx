@@ -193,7 +193,7 @@ export default function Room() {
         ref={stageRef}
         className="room__stage"
         role="img"
-        aria-label="A 3D room with a desk, a project box that opens selected projects, a guitar that opens a YouTube player, sticky notes on a leopard-print board and a window onto a garden."
+        aria-label="A 3D room with a desk, a project box that opens selected projects, a guitar that opens a YouTube player, sticky notes on a cork board and a window onto a garden."
       />
       {!touched && (
         <p className="room__hint">

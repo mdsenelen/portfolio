@@ -388,24 +388,31 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
     const b = book(0.148, 0.014, 0.21, 0xff5fae, 'notebook_closed', { t: 0.003, rough: 0.7, band: true }); b.rotation.y = Math.PI / 2; openNb.add(b)
   }
 
-  /* ---------- room dressing: zebra board, pink bench, red stool ---------- */
+  /* ---------- room dressing: cork noticeboard, pink bench, red stool ---------- */
   const stickies = []
   const dragListeners = []
   let hovered = null
   {
-    const bd = new THREE.Group(); bd.name = 'zebra_board'; bd.position.set(-1.2, 1.38, -0.445); bd.rotation.z = 0.04; scene.add(bd)
+    const bd = new THREE.Group(); bd.name = 'cork_board'; bd.position.set(-1.2, 1.38, -0.445); bd.rotation.z = 0.04; scene.add(bd)
     mesh(box(0.62, 0.5, 0.02), M(0xf6efe0, { name: 'board_mat' }), 'board_frame', bd, 0, 0, 0.01)
-    const boardTexture = new THREE.TextureLoader().load('/PXL_20260502_122514550%20(1).jpg', (texture) => {
-      if (disposed) { texture.dispose(); return }
-      const imageAspect = texture.image.width / texture.image.height
-      texture.colorSpace = THREE.SRGBColorSpace
-      texture.anisotropy = aniso
-      texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping
-      texture.repeat.y = imageAspect / (0.56 / 0.44)
-      texture.offset.y = (1 - texture.repeat.y) / 2
-      texture.needsUpdate = true
+    // cork: warm tan base with fine dark and light granules, slightly darker toward the frame
+    const boardTexture = canvasTex(1024, 800, (g, w, h) => {
+      g.fillStyle = '#c69a66'; g.fillRect(0, 0, w, h)
+      const tones = ['#8f6638', '#a87c48', '#b98c56', '#d8b07c', '#e4c090', '#7a5630']
+      for (let i = 0; i < 14000; i++) {
+        const big = Math.random() < 0.12
+        g.globalAlpha = big ? 0.35 : 0.55
+        g.fillStyle = tones[Math.random() * tones.length | 0]
+        g.beginPath()
+        g.ellipse(Math.random() * w, Math.random() * h, big ? 3 + Math.random() * 5 : 0.8 + Math.random() * 2.2, big ? 2 + Math.random() * 3 : 0.8 + Math.random() * 1.8, Math.random() * Math.PI, 0, 7)
+        g.fill()
+      }
+      g.globalAlpha = 1
+      const shade = g.createRadialGradient(w / 2, h / 2, h * 0.35, w / 2, h / 2, w * 0.72)
+      shade.addColorStop(0, 'rgba(60,35,10,0)'); shade.addColorStop(1, 'rgba(60,35,10,.22)')
+      g.fillStyle = shade; g.fillRect(0, 0, w, h)
     })
-    const zp = mesh(new THREE.PlaneGeometry(0.56, 0.44), new THREE.MeshStandardMaterial({ map: boardTexture, roughness: 0.9, name: 'leopard_noticeboard' }), 'leopard_noticeboard', bd, 0, 0, 0.0205); zp.castShadow = false
+    const zp = mesh(new THREE.PlaneGeometry(0.56, 0.44), new THREE.MeshStandardMaterial({ map: boardTexture, roughness: 0.95, name: 'cork_noticeboard' }), 'cork_noticeboard', bd, 0, 0, 0.0205); zp.castShadow = false
     bd.scale.setScalar(1.2)
     const stickyDefs = [
       ['in', 'LinkedIn', links.linkedin, '#c3dd9c', -0.1, 0.02],

@@ -53,7 +53,6 @@ src/
 public/
   resume.pdf              Resume download
   PXL_20260906_170423277.jpg  Portrait used in the Instagram photo frame
-  PXL_20260502_122514550 (1).jpg  Leopard-print noticeboard texture
 ```
 
 ## Updating Portfolio Content
