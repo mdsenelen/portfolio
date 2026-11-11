@@ -16,6 +16,7 @@ export const profile = {
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/mdenizsenelen' },
   ],
   resumeHref: '/resume.pdf',
+  portfolioHref: 'https://merve-deniz-senelen-portfolio.vercel.app',
 };
 
 export const githubProjects = [
@@ -31,7 +32,7 @@ export const githubProjects = [
   },
   {
     id: 'melody-generator-ai',
-    name: 'Melody Generator AI',
+    name: 'MelodyCVAE',
     href: 'https://github.com/mdsenelen/melody-generator-ai',
     bookHref: 'https://melody-generator-ai.vercel.app',
     live: 'https://melody-generator-ai.vercel.app',
@@ -60,8 +61,6 @@ export const about = [
   "I recently finished my MSc in Data Science with Distinction. For my thesis, MelodyCVAE, I built a system that generates melodies with a Conditional VAE and PPO reinforcement learning in PyTorch, and shipped it as a FastAPI and Next.js web app. I've always made music and built ML projects in my free time, so this was a good excuse to do both. My BSc thesis used an LSTM to predict ALS from EMG signals.",
   'I also built OpsLens, a real-time monitoring dashboard with Next.js, Fastify and PostgreSQL that streams live metrics over Server-Sent Events.',
   "I'm looking for frontend, full-stack or AI-focused engineering roles in Berlin or remote across Europe. I speak English (C2), German (B1) and Turkish (native).",
-  'GitHub: github.com/mdsenelen',
-  'Portfolio: merve-deniz-senelen-portfolio.vercel.app',
 ];
 
 export const skills = [
@@ -80,7 +79,7 @@ export const experience = [
     title: 'MSc in Data Science',
     org: 'Berlin',
     period: 'Sept 2024 – Oct 2026',
-    points: ['Completed an MSc in Data Science. Built machine-learning projects before and during the degree; thesis project: Melodia, an AI melody generator using a conditional VAE fine-tuned with PPO on MAESTRO v3.'],
+    points: ['Completed an MSc in Data Science. Built machine-learning projects before and during the degree; thesis project: MelodyCVAE, an AI melody generator using a conditional VAE fine-tuned with PPO on MAESTRO v3.'],
     tech: ['Python', 'PyTorch', 'scikit-learn', 'pandas'],
   },
   {
@@ -147,7 +146,7 @@ export const projects = [
   },
   {
     id: 'melodia',
-    title: 'Melodia',
+    title: 'MelodyCVAE',
     after: 'msc',
     year: '2025',
     summary:

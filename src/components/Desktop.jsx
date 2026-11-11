@@ -61,6 +61,14 @@ function WindowBody({ id, profile, about, skills, projects }) {
       <div className="win__readme">
         <h2>{profile.name}</h2>
         {about.map((para, i) => <p key={i}>{para}</p>)}
+        {[
+          ['GitHub', hrefOf(profile, 'GitHub')],
+          ['Portfolio', profile.portfolioHref],
+        ].filter(([, url]) => url).map(([label, url]) => (
+          <p key={label}>
+            {label}: <a href={url} target="_blank" rel="noreferrer">{url.replace(/^https?:\/\//, '')}</a>
+          </p>
+        ))}
         <ul className="win__skills">
           {skills.map((s) => <li key={s}>{s}</li>)}
         </ul>

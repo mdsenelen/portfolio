@@ -659,6 +659,16 @@ body {
   color: #4a3f38;
 }
 
+.win__readme a {
+  color: #7a5420;
+  font-weight: 600;
+  text-underline-offset: 2px;
+}
+
+.win__readme a:hover {
+  color: #b68235;
+}
+
 .win__skills {
   display: flex;
   flex-wrap: wrap;
