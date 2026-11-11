@@ -60,7 +60,6 @@ function WindowBody({ id, profile, about, skills, projects }) {
     return (
       <div className="win__readme">
         <h2>{profile.name}</h2>
-        <p className="win__role">{profile.role}</p>
         {about.map((para, i) => <p key={i}>{para}</p>)}
         <ul className="win__skills">
           {skills.map((s) => <li key={s}>{s}</li>)}
@@ -138,7 +137,7 @@ export default function Desktop({ profile, about, skills, projects, onClose }) {
     <div className="desktop" role="dialog" aria-modal="true" aria-label="Desktop with projects and links">
       <div className="desktop__wallpaper" aria-hidden="true" />
       <header className="desktop__bar">
-        <span className="desktop__brand">⌂ {profile.name}</span>
+        <button type="button" className="desktop__brand" onClick={onClose} aria-label={`${profile.name}, back to room`}>⌂ {profile.name}</button>
         <span className="desktop__menu" aria-hidden="true">File&nbsp;&nbsp;Edit&nbsp;&nbsp;View&nbsp;&nbsp;Go</span>
         <span className="desktop__bar-right">
           <Clock />

@@ -610,12 +610,6 @@ export function createRoom({ container, links = {}, profile = {}, onOpenDesktop,
   mesh(box(0.075, 0.115, 0.012), M(0xf2ece0, { roughness: 0.5, name: 'switch_plate' }), 'switch_plate', switchG, 0, 0, 0.006)
   mesh(box(0.055, 0.09, 0.004), M(0xe2dac8, { roughness: 0.6, name: 'switch_inset' }), 'switch_inset', switchG, 0, 0, 0.011)
   const switchNub = mesh(box(0.03, 0.042, 0.016), M(0xfaf6ee, { roughness: 0.35, name: 'switch_nub' }), 'switch_nub', switchG, 0, night ? -0.02 : 0.02, 0.016)
-  const switchLabel = canvasTex(128, 64, (g, w, h) => {
-    g.fillStyle = '#f2ece0'; g.fillRect(0, 0, w, h)
-    g.fillStyle = '#7a6f5a'; g.font = '600 22px ui-sans-serif,system-ui,sans-serif'; g.textAlign = 'center'
-    g.fillText('DAY', w / 2, 22); g.fillText('NIGHT', w / 2, 54)
-  })
-  const labelPlate = mesh(new THREE.PlaneGeometry(0.06, 0.03), new THREE.MeshBasicMaterial({ map: switchLabel, toneMapped: false }), 'switch_label', switchG, 0, -0.075, 0.007); labelPlate.castShadow = false
 
   /* ---------- camera, resize, loop ---------- */
   // the camera eases from `view` toward `goal`; goal is the room overview or a focused spot

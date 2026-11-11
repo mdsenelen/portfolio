@@ -54,9 +54,14 @@ export const githubProjects = [
 ];
 
 export const about = [
-  "I'm a frontend-focused full-stack engineer in Berlin with 3+ years of experience building React, Next.js and TypeScript products for data-heavy enterprise platforms, plus backend work in Node.js, AWS Lambda and FastAPI.",
-  'I like owning a feature from the first stakeholder conversation to release, and I ship it tested with Jest, React Testing Library and Playwright. AI-assisted development with Claude Code is a normal part of how I work.',
-  "I recently completed an MSc in Data Science. I've loved machine learning for years and built ML projects well before my studies and thesis, including Melodia. I speak English (C2), German (B1) and Turkish (native).",
+  "I'm a software engineer in Berlin with 3+ years of experience building web products in React and TypeScript. Most of my work has been on the frontend, but I'm comfortable going down the stack into Node.js, Python and PostgreSQL when a feature needs it.",
+  'The part I enjoy most is when something technically works but still feels slow or awkward to use. At Continuous Software, that meant figuring out why our largest table (12,000 rows) took 4.5 seconds to load and getting it down to 1.1. It also meant fixing 60+ UI bugs and making the app fully usable with a keyboard.',
+  'At BONFRY there was no frontend when I joined, so I built one from scratch as a working student during my MSc. I wrote tests from day one and shipped 7 features in 4 months. I also built the AWS Lambda workflows behind those features and set up Slack alerts, so failures showed up in under a minute instead of hours.',
+  "I recently finished my MSc in Data Science with Distinction. For my thesis, MelodyCVAE, I built a system that generates melodies with a Conditional VAE and PPO reinforcement learning in PyTorch, and shipped it as a FastAPI and Next.js web app. I've always made music and built ML projects in my free time, so this was a good excuse to do both. My BSc thesis used an LSTM to predict ALS from EMG signals.",
+  'I also built OpsLens, a real-time monitoring dashboard with Next.js, Fastify and PostgreSQL that streams live metrics over Server-Sent Events.',
+  "I'm looking for frontend, full-stack or AI-focused engineering roles in Berlin or remote across Europe. I speak English (C2), German (B1) and Turkish (native).",
+  'GitHub: github.com/mdsenelen',
+  'Portfolio: merve-deniz-senelen-portfolio.vercel.app',
 ];
 
 export const skills = [
@@ -64,7 +69,7 @@ export const skills = [
   'Node.js', 'Fastify', 'NestJS', 'FastAPI', 'PostgreSQL', 'GraphQL',
   'Jest', 'Vitest', 'Playwright',
   'AWS Lambda', 'Docker', 'GitHub Actions', 'Vercel',
-  'PyTorch', 'scikit-learn', 'Claude Code',
+  'PyTorch', 'scikit-learn', 'Claude Code', 'Codex',
 ];
 
 // kind: 'role' sits on the main line of the graph; 'study' too.
